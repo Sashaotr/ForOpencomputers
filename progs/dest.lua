@@ -2,12 +2,12 @@ local RM = require("RobotMovies")
 local com = require('component')
 local computer = require("computer")
 local event = require("event")
-local r = require("robot")
-
 if not com.isAvailable("robot") then
   print("только роботы могут использовать эту программу")
   os.exit()
 end
+local r = require("robot")
+
 
 local gen_inst, gen = false, nil
 if com.isAvailable("generator") then
