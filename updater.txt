@@ -1,0 +1,76 @@
+-- Установщик программ из GitHub для OpenComputers
+local component = require("component")
+local internet = require("internet")
+local fs = require("filesystem")
+local shell = require("shell")
+
+-- URL вашего репозитория
+local repoUrl = "https://raw.githubusercontent.com/Sashaotr/ForOpencomputers/main/"
+
+-- Функция для загрузки файла
+local function downloadFile(url, path)
+  print("Загружаю " .. url .. " в " .. path)
+  
+  -- Загружаем файл
+  local request = internet.request(url)
+  local result = ""
+  for chunk in request do
+    result = result .. chunk
+  end
+  
+  -- Сохраняем файл
+  local file = io.open(path, "w")
+  file:write(result)
+  file:close()
+  
+  print("Успешно загружено: " .. path)
+end
+
+-- Функция для получения списка файлов из папки репозитория
+local function getFolderFiles(folder)
+  local url = repoUrl .. folder .. "/"
+  local listUrl = url .. "filelist.txt" -- Нужно создать этот файл в каждой папке
+  
+  local request = internet.request(listUrl)
+  local result = ""
+  for chunk in request do
+    result = result .. chunk
+  end
+  
+  local files = {}
+  for file in result:gmatch("[^\r\n]+") do
+    table.insert(files, file)
+  end
+  
+  return files, url
+end
+
+-- Основная функция
+local function main()
+  -- Проверяем интернет-карту
+  if not component.isAvailable("internet") then
+    print("Ошибка: требуется интернет-карта")
+    return
+  end
+
+  print("=== Установщик программ из GitHub ===")
+  
+  -- Загружаем библиотеки в /lib
+  print("\nЗагружаю библиотеки...")
+  local libFiles, libUrl = getFolderFiles("lib")
+  for _, file in ipairs(libFiles) do
+    downloadFile(libUrl .. file, "/lib/" .. file)
+  end
+  
+  -- Загружаем программы в /home
+  print("\nЗагружаю программы...")
+  local progFiles, progUrl = getFolderFiles("progs")
+  for _, file in ipairs(progFiles) do
+    downloadFile(progUrl .. file, "/home/" .. file)
+  end
+  
+  print("\nВсе файлы успешно загружены!")
+end
+
+-- Запускаем программу
+main()
