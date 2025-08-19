@@ -57,7 +57,7 @@ local function F(x)
 RM.F(y, r.detect())
 end
 
-local function Up(x)
+local function UP(x)
 	local y = x or 1
 RM.UP(y, r.detectUp())
 end
