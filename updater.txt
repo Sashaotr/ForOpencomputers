@@ -9,8 +9,6 @@ local repoUrl = "https://raw.githubusercontent.com/Sashaotr/ForOpencomputers/mai
 
 -- Функция для загрузки файла
 local function downloadFile(url, path)
-  print("Загружаю " .. url .. " в " .. path)
-  
   -- Загружаем файл
   local request = internet.request(url)
   local result = ""
